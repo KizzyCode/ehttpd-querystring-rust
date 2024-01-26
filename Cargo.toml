@@ -1,0 +1,32 @@
+[package]
+name = "ehttpd-querystring"
+version = "0.1.0"
+edition = "2021"
+authors = ["KizzyCode Software Labs./Keziah Biermann <development@kizzycode.de>"]
+keywords = []
+categories = []
+description = "A crate to comfortably handle HTTP query string within `ehttpd`-based applications"
+license = "BSD-2-Clause OR MIT"
+repository = "https://github.com/KizzyCode/ehttpd-querystring-rust"
+readme = "README.md"
+
+
+[badges]
+appveyor = { repository = "KizzyCode/ehttpd-querystring-rust" }
+
+
+[features]
+default = []
+
+
+[dependencies]
+ehttpd = { version = "0.8.0", default-features = false }
+
+[dev-dependencies]
+
+
+[profile.release]
+overflow-checks = true
+
+[profile.bench]
+overflow-checks = true
