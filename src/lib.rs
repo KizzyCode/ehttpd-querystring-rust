@@ -13,6 +13,7 @@
 #![warn(clippy::cognitive_complexity)]
 
 pub mod querystring;
+pub mod querystringext;
 pub mod requestext;
 
 pub use crate::requestext::RequestQuerystringExt;
