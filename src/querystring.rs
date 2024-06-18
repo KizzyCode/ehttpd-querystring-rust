@@ -10,8 +10,10 @@ use std::{borrow::Cow, collections::BTreeMap, ops::Deref};
 /// validation.
 ///
 /// The following rules apply:
-///  - the query string _MUST NOT_ begin with a `?` – it's not a bug, it's a feature: this allows the parser to parse raw
-///    query strings in the body (e.g. from HTML forms)
+///  - the query string _MUST NOT_ begin with a `?` – it's not a bug, it's a feature: this allows the parser to parse
+///    raw query strings in the body (e.g. from HTML forms)
+///  - keys should be unique, non-unique keys are overwritten (i.e. `key0=ignored&key0=value` evaluates to
+///    `["key0": "value"]`)
 ///  - keys don't need a value (i.e. `key0&key1` is valid)
 ///  - keys can have an empty value (i.e. `key0=&key1=` is valid)
 ///  - keys can have a non-empty value (i.e. `key0=value0&key1=value1` is valid)
