@@ -28,13 +28,21 @@ pub struct QueryString<'a> {
 }
 impl<'a> QueryString<'a> {
     /// Splits a request target into its base URL and the query string
-    #[allow(clippy::missing_panics_doc)]
+    #[allow(clippy::missing_panics_doc, reason = "Panic should never occur")]
     pub fn decode(target: &'a Data) -> Result<Self, Error> {
         // Split the URL
         let mut target = target.splitn(2, |b| *b == b'?');
         let url = target.next().expect("first element of split iterator is empty?!");
         let querystring = target.next().unwrap_or_default();
 
+        // Parse the query string
+        let fields = Self::decode_raw(querystring)?;
+        Ok(Self { url, fields })
+    }
+    /// Decodes a raw query string without the leading `?` into its key-value pairs
+    #[allow(clippy::missing_panics_doc, reason = "Panic should never occur")]
+    #[allow(clippy::type_complexity, reason = "The type only looks complex but is not complex")]
+    pub fn decode_raw(querystring: &'a [u8]) -> Result<BTreeMap<Cow<'a, [u8]>, Cow<'a, [u8]>>, Error> {
         // Parse the query components
         let mut fields = BTreeMap::new();
         for pair in querystring.split(|b| *b == b'&') {
@@ -51,7 +59,7 @@ impl<'a> QueryString<'a> {
                 fields.insert(key, value);
             }
         }
-        Ok(Self { url, fields })
+        Ok(fields)
     }
 
     /// The request base URL
@@ -88,7 +96,7 @@ impl<'a> QueryString<'a> {
     /// Encodes a nibble into a hex char
     fn percent_decode_nibble(nibble: u8) -> Result<u8, Error> {
         // Note: All operations are safe since they are implicitly validated by the range comparisons
-        #[allow(clippy::arithmetic_side_effects)]
+        #[allow(clippy::arithmetic_side_effects, reason = "The range is validated by the match")]
         match nibble {
             b'0'..=b'9' => Ok(nibble - b'0'),
             b'a'..=b'f' => Ok((nibble - b'a') + 0xA),
