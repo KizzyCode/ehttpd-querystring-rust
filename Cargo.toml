@@ -1,6 +1,6 @@
 [package]
 name = "ehttpd-querystring"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["KizzyCode Software Labs./Keziah Biermann <development@kizzycode.de>"]
 keywords = []
@@ -20,7 +20,7 @@ default = []
 
 
 [dependencies]
-ehttpd = { version = "0.8.0", default-features = false }
+ehttpd = { version = "0.9.0", default-features = false }
 
 [dev-dependencies]
 
