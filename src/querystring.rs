@@ -107,7 +107,7 @@ impl<'a> QueryString<'a> {
 
     /// Encodes a byte
     fn percent_decode_byte(high: u8, low: u8) -> Result<u8, Error> {
-        Ok(Self::percent_decode_nibble(high)? << 4 | Self::percent_decode_nibble(low)?)
+        Ok((Self::percent_decode_nibble(high)? << 4) | Self::percent_decode_nibble(low)?)
     }
 }
 impl<'a> Deref for QueryString<'a> {
@@ -115,5 +115,13 @@ impl<'a> Deref for QueryString<'a> {
 
     fn deref(&self) -> &Self::Target {
         &self.fields
+    }
+}
+impl<'a> IntoIterator for QueryString<'a> {
+    type Item = <BTreeMap<Cow<'a, [u8]>, Cow<'a, [u8]>> as IntoIterator>::Item;
+    type IntoIter = <BTreeMap<Cow<'a, [u8]>, Cow<'a, [u8]>> as IntoIterator>::IntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.fields.into_iter()
     }
 }
