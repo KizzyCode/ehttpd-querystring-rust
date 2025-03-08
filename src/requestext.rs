@@ -8,7 +8,7 @@ pub trait RequestQuerystringExt {
     /// Gets the request query string
     fn querystring(&self) -> Result<QueryString, Error>;
 }
-impl<'a, const HEADER_SIZE_MAX: usize> RequestQuerystringExt for Request<'a, HEADER_SIZE_MAX> {
+impl<const HEADER_SIZE_MAX: usize> RequestQuerystringExt for Request<'_, HEADER_SIZE_MAX> {
     fn querystring(&self) -> Result<QueryString, Error> {
         QueryString::decode(&self.target)
     }
