@@ -70,7 +70,7 @@ impl<'a> QueryString<'a> {
     /// Percent-decodes the encoded data
     pub fn percent_decode(encoded: Cow<[u8]>) -> Result<Cow<[u8]>, Error> {
         // Check if we need some decoding
-        let needs_decode = encoded.iter().any(|b| *b == b'%');
+        let needs_decode = encoded.contains(&b'%');
         if !needs_decode {
             return Ok(encoded);
         }
