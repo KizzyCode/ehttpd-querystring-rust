@@ -1,7 +1,12 @@
 //! Implements query-string decoding
 
-use ehttpd::{bytes::Data, error, error::Error};
-use std::{borrow::Cow, collections::BTreeMap, ops::Deref};
+use ehttpd::bytes::{Data, Parse};
+use ehttpd::err;
+use ehttpd::error::Error;
+use std::borrow::{Borrow, Cow};
+use std::collections::BTreeMap;
+use std::ops::Deref;
+use std::str::FromStr;
 
 /// A query string
 ///
@@ -67,6 +72,42 @@ impl<'a> QueryString<'a> {
         self.url
     }
 
+    /// Gets the value as string slice
+    pub fn get_str<Key>(&self, key: &Key) -> Result<Option<&str>, Error>
+    where
+        Key: Ord + ?Sized,
+        Cow<'a, [u8]>: Borrow<Key> + Ord,
+    {
+        // Get the value
+        let Some(value) = self.get(key) else {
+            // No value for this key
+            return Ok(None);
+        };
+
+        // Parse the value to a string
+        let value = str::from_utf8(value)?;
+        Ok(Some(value))
+    }
+
+    /// Gets a value and converts it to the requested type
+    pub fn get_as<Type, Key>(&self, key: &Key) -> Result<Option<Type>, Error>
+    where
+        Type: FromStr,
+        Type::Err: std::error::Error + Send + 'static,
+        Key: Ord + ?Sized,
+        Cow<'a, [u8]>: Borrow<Key> + Ord,
+    {
+        // Get the value
+        let Some(value) = self.get(key) else {
+            // No value for this key
+            return Ok(None);
+        };
+
+        // Parse the value
+        let parsed = value.as_ref().parse()?;
+        Ok(Some(parsed))
+    }
+
     /// Percent-decodes the encoded data
     pub fn percent_decode(encoded: Cow<[u8]>) -> Result<Cow<[u8]>, Error> {
         // Check if we need some decoding
@@ -82,8 +123,8 @@ impl<'a> QueryString<'a> {
             // Decode percent literal if necessary
             if byte == b'%' {
                 // Get the encoded bytes
-                let high = source.next().ok_or(error!("Truncated hex literal"))?;
-                let low = source.next().ok_or(error!("Truncated hex literal"))?;
+                let high = source.next().ok_or(err!("Truncated hex literal"))?;
+                let low = source.next().ok_or(err!("Truncated hex literal"))?;
                 byte = Self::percent_decode_byte(high, low)?;
             }
 
@@ -101,7 +142,7 @@ impl<'a> QueryString<'a> {
             b'0'..=b'9' => Ok(nibble - b'0'),
             b'a'..=b'f' => Ok((nibble - b'a') + 0xA),
             b'A'..=b'F' => Ok((nibble - b'A') + 0xA),
-            nibble => Err(error!("Invalid nibble 0x{nibble:01x}")),
+            nibble => Err(err!("Invalid nibble 0x{nibble:01x}")),
         }
     }
 

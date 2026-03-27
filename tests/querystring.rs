@@ -1,6 +1,8 @@
 use ehttpd::bytes::Data;
 use ehttpd_querystring::querystring::QueryString;
-use std::{borrow::Cow, collections::BTreeMap, ops::Deref};
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+use std::ops::Deref;
 
 /// Creates a new map
 pub fn map<I>(pairs: I) -> BTreeMap<Cow<'static, [u8]>, Cow<'static, [u8]>>

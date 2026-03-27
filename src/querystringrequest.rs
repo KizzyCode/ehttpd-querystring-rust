@@ -1,14 +1,15 @@
 //! An extension trait for HTTP requests to work with query strings
 
 use crate::querystring::QueryString;
-use ehttpd::{error::Error, http::Request};
+use ehttpd::error::Error;
+use ehttpd::http::Request;
 
 /// An extension trait for HTTP requests to work with query strings
-pub trait RequestQuerystringExt {
+pub trait QuerystringRequest {
     /// Gets the request query string
     fn querystring(&self) -> Result<QueryString<'_>, Error>;
 }
-impl<const HEADER_SIZE_MAX: usize> RequestQuerystringExt for Request<'_, HEADER_SIZE_MAX> {
+impl<const HEADER_SIZE_MAX: usize> QuerystringRequest for Request<'_, HEADER_SIZE_MAX> {
     fn querystring(&self) -> Result<QueryString<'_>, Error> {
         QueryString::decode(&self.target)
     }

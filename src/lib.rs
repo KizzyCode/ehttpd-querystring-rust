@@ -13,10 +13,8 @@
 #![warn(clippy::cognitive_complexity)]
 
 pub mod querystring;
-pub mod querystringext;
-pub mod requestext;
+pub mod querystringrequest;
 
-pub use crate::requestext::RequestQuerystringExt;
-
+pub use crate::querystringrequest::QuerystringRequest;
 // Re-export our ehttpd dependency
 pub use ehttpd;
