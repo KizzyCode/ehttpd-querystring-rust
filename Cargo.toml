@@ -20,7 +20,7 @@ default = []
 
 
 [dependencies]
-ehttpd = { version = "0.13.0", default-features = false }
+ehttpd = { version = "0.13.2", default-features = false }
 
 [dev-dependencies]
 
